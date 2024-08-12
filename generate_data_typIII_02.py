@@ -1,12 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter, MultipleLocator
 from scipy.stats import gamma
 
-'''
-Generate Data of typIV: Based on data typIII, but 
 
-xxx
+'''
+Generate Data of typIII: Dwelltime based on gamma distribution, with additional small step (half size of normal step) at 4th and 8th position
++ sinus based noise
+
+Call generate_txt_file to generate input data of typIII for AutoStepfinder, BNP-step and ground truth without noise
 
 Arguments:
 stepsize = default set to 8nm
@@ -14,7 +15,7 @@ max_lenght = equivalent to total time, default set to 300
 SN_ratio = Signal to noise ratio, default set to 1/3 (decision based on AutoStepfinder paper, optimal results expected for that ratio)
 '''
 
-def sample_sinus_dwelltime(max_length=300, step_size=8):
+def sample_dwell_times(max_length=300, step_size=8):
     # Initialize the list to hold step sizes
     steps = []
     counter = 0
@@ -41,46 +42,36 @@ def sample_sinus_dwelltime(max_length=300, step_size=8):
             stepsize = stepsize + step_size/2
         else:
             stepsize = stepsize + step_size
-    x = np.linspace(0, max_length, num=300)
-    return steps + (2.4 * np.sin(2 * np.pi * 0.24 * x))
-
-
-'''
-testrun on sample_sinus_dwelltime
-x=sample_sinus_dwelltime()
-plt.plot(x)
-plt.show()
-'''
+    return steps
 
 # add noise to ground truth
-def generate_noisy_data(max_length=300, step_size=8, SN_ratio=1/3):
-    raw_data = sample_sinus_dwelltime(max_length, step_size)
+def generate_sinus_noisy_data(max_length=300, step_size=8, SN_ratio=1/3):
+    x = np.linspace(0, max_length, num=300)
+    raw_data = sample_dwell_times(max_length, step_size)
+    sinus_noise = raw_data + (2.4 * np.sin(2 * np.pi * 0.24 * x))
     noise = np.random.normal(0, SN_ratio * step_size, max_length)
-    noisy_data = raw_data + noise
+    noisy_data = sinus_noise + noise
     return (noisy_data, raw_data)
-
 
 # create txt input_files for ASF, BNP-Step and further analysis
 def generate_txt_file(max_length=300, step_size=8, SN_ratio=1/3):
     time = range(max_length)
-    noisy_data = generate_noisy_data(max_length, step_size, SN_ratio)
+    noisy_data = generate_sinus_noisy_data(max_length, step_size, SN_ratio)
     for t in time:
         list_noisy = [t, float(round(noisy_data[0][t], 5))]
         list_groundtruth = [t, float(round(noisy_data[1][t], 5))]
-        with open("output/BNP_noisy_data_typIV.txt", 'a') as f:
+        with open("output/BNB_noisy_data_typIII_02_SN_02.txt", 'a') as f:
             print(str(list_noisy[0]) + "," + str(list_noisy[1]), file=f)
         f.close()
-        with open("output/ASF_noisy_data_typIV.txt", 'a') as f:
+        with open("output/ASF_noisy_data_typIII_02_SN_02.txt", 'a') as f:
             print(list_noisy[1], file=f)
         f.close()
-        with open("output/data_typIV.txt", 'a') as f:
+        with open("output/data_typIII_02_SN_02.txt", 'a') as f:
             print(str(list_noisy[0]) + "," + str(list_noisy[1]) + "," + str(list_groundtruth[1]), file=f)
         f.close()
 
-#generate_txt_file()
 
+generate_txt_file(SN_ratio=0.2)
 
-
-
-
-
+# plt.plot(x)
+# plt.show()

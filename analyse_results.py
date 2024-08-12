@@ -2,12 +2,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-#"Y:/users/Valerie/Loeff-Kerssemakers-et-al-AutoStepFinder/steppy_results/ASF_noisy_data_1_FitX.csv"
-#"C:/Users/Valerie/Documents/Master/Ries Group/Stepfinder_Data Simulator/noisy_data.txt"
 
-FitX_file = "Y:/users/Valerie/results/ASF_results/simulated data/ASF_noisy_data_typIV_FitX.csv"
-input_data = "Y:/users/Valerie/data/Simulated_data/data_typIV.txt"
-BNP_result = "Y:/users/Valerie/results/BNP_results/simulated_data/50000_BNB_noisy_data_typIV.csv"
+FitX_file = "Y:/users/Valerie/results/ASF_results/simulated data/ASF_noisy_data_typII_02_SN_1_FitX.csv"
+input_data = "Y:/users/Valerie/data/simulated data/noisy_data_typII_02/data_typII_02_SN_1.txt"
+BNP_result = "Y:/users/Valerie/results/BNP_results/simulated data/50000_BNP_noisy_data_typII_02_SN_1.csv"
 
 '''
 Function to plot ASF and BNP result
@@ -37,32 +35,51 @@ def plot_data(input_data, FitX_file, BNP_result, show_gt=True):
     #if data is synthetic, plot ground truth, else set show_gt=False
     if show_gt==True:
         ground_truth = data.iloc[:, 2]
-        plt.plot(time, ground_truth, label='Ground Truth', color='yellow')
+        plt.plot(time, ground_truth, label='Ground Truth', color='black')
 
     # Add axis names and legend
     plt.xlabel('time in ms')
     plt.ylabel('position in nm')
     plt.legend()
     # Display the plot
-    plt.show()
+    #plt.show()
+    # Save plot
+    plt.savefig("life_K560N_ASFvsBNP.png", bbox_inches='tight')
 
-plot_data(input_data, FitX_file, BNP_result)
+#plot_data(input_data, FitX_file, BNP_result)
 
-def plot_x(input_data):
-    # Read the data from the CSV file
+def mean_square_error(input_data, FitX_file, BNP_result, show_gt=True):
+    #load data
     data = pd.read_csv(input_data, delimiter=',', header=None)
+    ASF_data = pd.read_csv(FitX_file, delimiter=',', header=None)
+    BNP_data = pd.read_csv(BNP_result, delimiter=',', header=0)
 
     # Extract the data
-    time = data.iloc[:, 0]
-    position = data.iloc[:, 1]
+    #time = data.iloc[:, 0]
+    ASF_Steps = ASF_data.iloc[:, 0].values
+    BNP_Steps = BNP_data.iloc[:, 1].values
 
-    plt.scatter(time, position, marker='o', s=0.1, color='black')
+    # if data is synthetic, plot ground truth, else set show_gt=False
+    if show_gt == True:
+        ground_truth = data.iloc[:, 2]
 
-    # Add axis names and legend
-    plt.xlabel('time in ms')
-    plt.ylabel('position in nm')
-    # Display the plot
+    MSE_ASF = np.mean(np.square(ASF_Steps - ground_truth))
+    MSE_BNP = np.mean(np.square(BNP_Steps - ground_truth))
+
+    #print("MSE for" + input_data)
+    #print("MSE for ASF: " + str(MSE_ASF))
+    #print("MSE for BNP: " + str(MSE_BNP))
+    x = np.square(ASF_Steps - ground_truth)
+    y = np.square(BNP_Steps - ground_truth)
+
+    plt.plot(x, label='AutoStepfinder', color='blue')
+    plt.plot(y, label='BNP-Step', color='red')
+    plt.legend()
     plt.show()
+    #arr = pd.DataFrame({"BNP": y, "ASF": x})
+    #print(arr)
+
+mean_square_error(input_data, FitX_file, BNP_result)
 
 def load_data_for_analysis(data_path, file_type=None):
     # load data
