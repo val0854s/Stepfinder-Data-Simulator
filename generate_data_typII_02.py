@@ -45,7 +45,7 @@ plt.show()'''
 def generate_sinus_noisy_data(max_length=300, step_size=8, SN_ratio=1/3):
     x = np.linspace(0, max_length, num=300)
     raw_data = sample_dwelltime(max_length, step_size)
-    sinus_noise = raw_data + + (2.4 * np.sin(2 * np.pi * 0.24 * x))
+    sinus_noise = raw_data + + (1.4 * np.sin(2 * np.pi * 0.24 * x))
     noise = np.random.normal(0, SN_ratio * step_size, max_length)
     noisy_data = sinus_noise + noise
     return (noisy_data, raw_data)
@@ -61,17 +61,17 @@ def generate_txt_file(max_length=300, step_size=8, SN_ratio=1/3):
     for t in time:
         list_noisy = [t, float(round(noisy_data[0][t], 5))]
         list_groundtruth = [t, float(round(noisy_data[1][t], 5))]
-        with open("output/BNP_noisy_data_typII_02_SN_045.txt", 'a') as f:
+        with open("output/BNP_noisy_data_typII_02_SN_05.txt", 'a') as f:
             print(str(list_noisy[0]) + "," + str(list_noisy[1]), file=f)
         f.close()
-        with open("output/ASF_noisy_data_typII_02_SN_045.txt", 'a') as f:
+        with open("output/ASF_noisy_data_typII_02_SN_05.txt", 'a') as f:
             print(list_noisy[1], file=f)
         f.close()
-        with open("output/data_typII_02_SN_045.txt", 'a') as f:
+        with open("output/data_typII_02_SN_05.txt", 'a') as f:
             print(str(list_noisy[0]) + "," + str(list_noisy[1]) + "," + str(list_groundtruth[1]), file=f)
         f.close()
 
-generate_txt_file(SN_ratio=0.45)
+generate_txt_file(SN_ratio=0.5)
 
 
 

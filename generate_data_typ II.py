@@ -97,6 +97,6 @@ def sample_and_plot_gamma(alpha, beta, num_samples=10000):
     plt.show()
 
 # Example usage:
-#alpha_param = 2   # Shape parameter (k)
-#beta_param = 14  # Scale parameter (θ)
-#sample_and_plot_gamma(alpha_param, beta_param, num_samples=10000)
+alpha_param = 2   # Shape parameter (k)
+beta_param = 14  # Scale parameter (θ)
+sample_and_plot_gamma(alpha_param, beta_param, num_samples=10000)

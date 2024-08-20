@@ -48,7 +48,7 @@ def sample_dwell_times(max_length=300, step_size=8):
 def generate_sinus_noisy_data(max_length=300, step_size=8, SN_ratio=1/3):
     x = np.linspace(0, max_length, num=300)
     raw_data = sample_dwell_times(max_length, step_size)
-    sinus_noise = raw_data + (2.4 * np.sin(2 * np.pi * 0.24 * x))
+    sinus_noise = raw_data + (1.5 * np.sin(2 * np.pi * 0.24 * x))
     noise = np.random.normal(0, SN_ratio * step_size, max_length)
     noisy_data = sinus_noise + noise
     return (noisy_data, raw_data)

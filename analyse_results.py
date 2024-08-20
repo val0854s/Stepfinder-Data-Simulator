@@ -3,9 +3,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-FitX_file = "Y:/users/Valerie/results/ASF_results/simulated data/ASF_noisy_data_typII_02_SN_1_FitX.csv"
-input_data = "Y:/users/Valerie/data/simulated data/noisy_data_typII_02/data_typII_02_SN_1.txt"
-BNP_result = "Y:/users/Valerie/results/BNP_results/simulated data/50000_BNP_noisy_data_typII_02_SN_1.csv"
+FitX_file = "Y:/users/Valerie/results/ASF_results/simulated data/ASF_noisy_data_typI_SN_08_FitX.csv"
+input_data = "Y:/users/Valerie/data/simulated data/noisy_data_typI/data_typI_SN_08.txt"
+BNP_result = "Y:/users/Valerie/results/BNP_results/simulated data/50000_BNP_noisy_data_typI_SN_08.csv"
 
 '''
 Function to plot ASF and BNP result
@@ -44,9 +44,9 @@ def plot_data(input_data, FitX_file, BNP_result, show_gt=True):
     # Display the plot
     #plt.show()
     # Save plot
-    plt.savefig("life_K560N_ASFvsBNP.png", bbox_inches='tight')
+    plt.savefig("data_typII_02_SN_05_ASFvsBNP.png", bbox_inches='tight')
 
-#plot_data(input_data, FitX_file, BNP_result)
+plot_data(input_data, FitX_file, BNP_result)
 
 def mean_square_error(input_data, FitX_file, BNP_result, show_gt=True):
     #load data
@@ -66,20 +66,22 @@ def mean_square_error(input_data, FitX_file, BNP_result, show_gt=True):
     MSE_ASF = np.mean(np.square(ASF_Steps - ground_truth))
     MSE_BNP = np.mean(np.square(BNP_Steps - ground_truth))
 
-    #print("MSE for" + input_data)
-    #print("MSE for ASF: " + str(MSE_ASF))
-    #print("MSE for BNP: " + str(MSE_BNP))
+    print("MSE for" + input_data)
+    print("MSE for ASF: " + str(MSE_ASF))
+    print("MSE for BNP: " + str(MSE_BNP))
+
     x = np.square(ASF_Steps - ground_truth)
     y = np.square(BNP_Steps - ground_truth)
 
-    plt.plot(x, label='AutoStepfinder', color='blue')
+    '''plt.plot(x, label='AutoStepfinder', color='blue')
     plt.plot(y, label='BNP-Step', color='red')
     plt.legend()
     plt.show()
-    #arr = pd.DataFrame({"BNP": y, "ASF": x})
-    #print(arr)
+    arr = pd.DataFrame({"BNP": y, "ASF": x})
+    print(arr)'''
 
-mean_square_error(input_data, FitX_file, BNP_result)
+
+#mean_square_error(input_data, FitX_file, BNP_result)
 
 def load_data_for_analysis(data_path, file_type=None):
     # load data
@@ -123,6 +125,27 @@ def analyse_data(data_path, file_type=None):
 
 #analyse_data(FitX, file_type="ASF")
 #analyse_data(input_data)
+
+'''data_path = "C:/Users/Valerie/Downloads/Repository for MINFLUX dissects the unimpeded walking of kinesin-1/Data repository/KinesinDataFiles/T324C/1mM/allsteps_reeval.xls"
+txt_file = "C:/Users/Valerie/Downloads/Repository for MINFLUX dissects the unimpeded walking of kinesin-1/Data repository/KinesinDataFiles/T324C/1mM/K3241mMresults by dates20220118sample5.txt"
+
+data = pd.read_csv(txt_file, delimiter="\t")
+
+arr = np.loadtxt(txt_file, skiprows=1)
+
+print(arr.shape)
+
+
+
+with open(txt_file, 'r') as file:
+    file_content = file.read()'''
+
+
+
+#print(repr(file_content))
+
+
+
 
 
 

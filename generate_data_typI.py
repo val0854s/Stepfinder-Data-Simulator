@@ -35,18 +35,18 @@ def generate_txt_file(stepsize=8, number_of_steps=10, number_of_dp=300, SN_ratio
     for t in time:
         list_noisy = [t, float(round(noisy_data[0][t],5))]
         list_groundtruth = [t, float(round(noisy_data[1][t],5))]
-        with open("output/BNB_noisy_data_typI_SN_1.txt", 'a') as f:
+        with open("output/BNB_noisy_data_typI_SN_08.txt", 'a') as f:
             print(str(list_noisy[0])+","+str(list_noisy[1]), file=f)
         f.close()
-        with open("output/ASF_noisy_data_typI_1.txt", 'a') as f:
+        with open("output/ASF_noisy_data_typI_08.txt", 'a') as f:
             print(list_noisy[1], file=f)
         f.close()
-        with open("output/data_typI_1.txt", 'a') as f:
+        with open("output/data_typI_08.txt", 'a') as f:
             print(str(list_noisy[0])+","+str(list_noisy[1])+","+str(list_groundtruth[1]), file=f)
         f.close()
 
 
-generate_txt_file(SN_ratio=1)
+generate_txt_file(SN_ratio=0.8)
 
 #plt.plot(x)
 #plt.show()
