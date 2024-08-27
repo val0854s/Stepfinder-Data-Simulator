@@ -3,10 +3,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-FitX_file = "Y:/users/Valerie/results/ASF_results/simulated data/ASF_noisy_data_typI_SN_08_FitX.csv"
-input_data = "Y:/users/Valerie/data/simulated data/noisy_data_typI/data_typI_SN_08.txt"
-BNP_result = "Y:/users/Valerie/results/BNP_results/simulated data/50000_BNP_noisy_data_typI_SN_08.csv"
+FitX_file = "Y:/users/Valerie/results/ASF_results/experimental data/ASF_life_K560N_FitX.csv"
+input_data = "Y:/users/Valerie/data/experimental data/life_K560N.csv"
+BNP_result = "Y:/users/Valerie/results/BNP_results/experimental data/50000_life_K560N.csv"
 
+exp_gt = "Y:/users/Valerie/data/simulated data/noisy_data_typI/data_typI.txt"
 '''
 Function to plot ASF and BNP result
 
@@ -44,9 +45,9 @@ def plot_data(input_data, FitX_file, BNP_result, show_gt=True):
     # Display the plot
     #plt.show()
     # Save plot
-    plt.savefig("data_typII_02_SN_05_ASFvsBNP.png", bbox_inches='tight')
+    plt.savefig("data_typI_SN_08_ASFvsBNP.png", bbox_inches='tight')
 
-plot_data(input_data, FitX_file, BNP_result)
+#plot_data(input_data, FitX_file, BNP_result)
 
 def mean_square_error(input_data, FitX_file, BNP_result, show_gt=True):
     #load data
@@ -70,10 +71,10 @@ def mean_square_error(input_data, FitX_file, BNP_result, show_gt=True):
     print("MSE for ASF: " + str(MSE_ASF))
     print("MSE for BNP: " + str(MSE_BNP))
 
-    x = np.square(ASF_Steps - ground_truth)
+    '''x = np.square(ASF_Steps - ground_truth)
     y = np.square(BNP_Steps - ground_truth)
 
-    '''plt.plot(x, label='AutoStepfinder', color='blue')
+    plt.plot(x, label='AutoStepfinder', color='blue')
     plt.plot(y, label='BNP-Step', color='red')
     plt.legend()
     plt.show()
@@ -87,18 +88,24 @@ def load_data_for_analysis(data_path, file_type=None):
     # load data
         ## include file_type ASF if input is AutoStepfinder FitX result data
         ## Note: Only works if input is in txt format!
-    data = pd.read_csv(data_path, delimiter=',', header=None)
     if file_type == "ASF":
+        data = pd.read_csv(data_path, delimiter=',', header=None)
         return data
+    elif file_type == "BNP":
+        data = pd.read_csv(BNP_result, delimiter=',', header=0)
+        return data.iloc[:,1].to_frame()
     else:
+        data = pd.read_csv(data_path, delimiter=',', header=None)
         ground_truth = data[2]
         return ground_truth.to_frame()
 
 def analyse_data(data_path, file_type=None):
     #load data:
-        # typ is either ASF (for AutoStepfinder result file), or input_file for analysis of the ground truth
+        # typ is either:
+        # ASF (for AutoStepfinder result file),
+        # BNP (for BNP-Step result),
+        # or input_file for analysis of the ground truth
     data = load_data_for_analysis(data_path, file_type)
-
     results = []
     previous_row = None
 
@@ -119,34 +126,51 @@ def analyse_data(data_path, file_type=None):
     results_matrix = np.array(results, dtype=object)
     result_df = pd.DataFrame(results_matrix, columns=['step_position', 'step_size', 'dwell_time', 'level_before', 'level_after'])
 
-    print(type(result_df))
+    print(result_df)
 
 
-
-#analyse_data(FitX, file_type="ASF")
+#analyse_data(BNP_result, file_type="BNP")
 #analyse_data(input_data)
 
-'''data_path = "C:/Users/Valerie/Downloads/Repository for MINFLUX dissects the unimpeded walking of kinesin-1/Data repository/KinesinDataFiles/T324C/1mM/allsteps_reeval.xls"
-txt_file = "C:/Users/Valerie/Downloads/Repository for MINFLUX dissects the unimpeded walking of kinesin-1/Data repository/KinesinDataFiles/T324C/1mM/K3241mMresults by dates20220118sample5.txt"
+data = "C:/Users/Valerie/Documents/Master/Ries Group/T324C/1mM/K3241mMresults by dates20210618sample2.txt"
+data2 = "C:/Users/Valerie/Documents/Master/Ries Group/T324C/100uM/K324100uMresults by dates20210219sample1.txt"
+data3 = "C:/Users/Valerie/Documents/Master/Ries Group/T324C/10uM/K32410uMg27+g44_10uMresults by dates20210909sample1.txt"
 
-data = pd.read_csv(txt_file, delimiter="\t")
+def extract_substep_data(filepath):
+    #load txt as array
+    arr = np.loadtxt(filepath, delimiter="\t", skiprows=1)
+    #transform into pandas dataframe
+    df = pd.DataFrame(arr)
+    #kinesin position is probably stored in first column?
+    position = df[0]
+    t = df[1]
+    plt.plot(position, t)
 
-arr = np.loadtxt(txt_file, skiprows=1)
+    #find indices of all tracs
+    indices_end = []
+    indices_start = [0]
+    for i in range(len(position)):
+        if position[i] == 0 and position[i-1] != 0:
+            indices_end.append(i)
+        elif i > 0 and position[i] != 0 and position[i-1] == 0:
+            indices_start.append(i)
 
-print(arr.shape)
+    #print(indices_end)
+    #print(indices_start)
+    test = position.iloc[indices_start[9]:indices_end[9],]
+    test_time = range(len(test))
+    #plt.plot(test_time, test)
+    plt.show()
+    #test.to_csv('test_substep_T324C_10uM_sample1.txt', sep=' ', header=False, index=False)
 
 
+x = "Y:/users/Valerie/results/ASF_results/experimental data/test_substep_T324C_10uM_sample1_FitX.csv"
+y = pd.read_csv(x, delimiter=',', header=None)
 
-with open(txt_file, 'r') as file:
-    file_content = file.read()'''
-
-
-
-#print(repr(file_content))
+extract_substep_data(data3)
 
 
-
-
-
+#plt.plot(y)
+#plt.show()
 
 
